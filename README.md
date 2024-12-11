@@ -24,7 +24,7 @@ Cette API permet de gérer les réservations de terrains de badminton pour une a
 ## Installation
 1. Clonez le projet :
    ```bash
-   git clone [votre-dépôt-git]
+   git clone [clé-ssh]
    cd badminton-reservation
    ```
 
