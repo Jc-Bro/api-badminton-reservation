@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Badminton Reservation API
+  version: 1.0.0
+  description: API pour gérer l'authentification et les réservations de terrains de badminton.
+servers:
+  - url: http://localhost:3000
+    description: Serveur local
+paths:
+  /:
+    get:
+      summary: Page d'accueil
+      description: Affiche un message de bienvenue.
+      responses:
+        '200':
+          description: Succès
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api-docs:
+    get:
+      summary: Documentation Swagger UI
+      description: Accéder à la documentation Swagger de l'API.
+      responses:
+        '200':
+          description: Succès
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /auth/login:
+    post:
+      summary: Authentification utilisateur
+      description: Permet à un utilisateur de se connecter avec un nom d'utilisateur et un mot de passe.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Nom d'utilisateur
+                password:
+                  type: string
+                  description: Mot de passe
+      responses:
+        '200':
+          description: Succès - Retourne un token JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Jeton JWT pour l'authentification.
+        '401':
+          description: Identifiants incorrects.
+
+  /reservations:
+    get:
+      summary: Récupérer toutes les réservations
+      description: Renvoie une liste de toutes les réservations effectuées.
+      responses:
+        '200':
+          description: Succès - Liste des réservations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    date:
+                      type: string
+                      format: date
+                    time:
+                      type: string
+                    terrain:
+                      type: string
+                    userId:
+                      type: integer
+                      description: ID de l'utilisateur ayant réservé.
+
+    post:
+      summary: Créer une réservation
+      description: Permet à un utilisateur authentifié de créer une réservation pour un terrain.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                  description: Date de la réservation.
+                time:
+                  type: string
+                  description: Heure de la réservation (format HH:mm).
+                terrain:
+                  type: string
+                  description: Nom du terrain (A, B, C ou D).
+      responses:
+        '201':
+          description: Réservation créée avec succès.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  date:
+                    type: string
+                  time:
+                    type: string
+                  terrain:
+                    type: string
+                  userId:
+                    type: integer
+        '400':
+          description: Données invalides ou manque de permissions.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
